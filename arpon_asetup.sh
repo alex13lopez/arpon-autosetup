@@ -10,8 +10,10 @@
 ### END INIT INFO
 
 # Author: ArenGamerz <arendevel@gmail.com>
-# Version: 2.1
+# Version: 2.2.1
 
+# ArpOn conf file
+conf_file='/etc/arpon.conf'
 
 # Colors
 yellow=`tput setaf 3`
@@ -21,29 +23,22 @@ green=`tput setaf 2`
 
 
 # Killing any running currently instance of arpon
+killall -9 arpon
 
-twin_process=$(ps aux | grep "arpon" | grep -v "arpon_auto" | tr -s " " | cut -d" " -f2 | head -1)
-
-for process in ${twin_process[@]}
-do
-	kill $process 2>/dev/null
-done
-
-# Now depending on the network that we are connected to we setup the /etc/arpon.conf and start a new instance of arpon
+# Now depending on the network that we are connected to we setup the arpon.conf and start a new instance of arpon
 
 function autosetup() {
-	if grep -q "$1" /etc/arpon.conf; then
-		sed -i '/^#/! s/^/#/' /etc/arpon.conf
-		sed -i "/$1/ s|^#||" /etc/arpon.conf
+	# $1 = ip, $2 = iface
+	if grep -q "$1" "$conf_file"; then
+		sed -i '/^#/! s/^/#/' "$conf_file"
+		sed -i "/$1/ s|^#||" "$conf_file"
 		arpon -i $2 -d -H
-		echo
 		echo "${bold}${green}Automatic setup succeed!${reset}"
 	else
 		arpon -i $2 -d -D
-		echo
-		echo "${bold}${yellow}WARNING: IP '$ip*' NOT FOUND IN arpon.conf file, so ArpOn is running in Dynamic Mode${reset}"
+		echo "${bold}${yellow}WARNING: NO IP matching '$1*' FOUND IN '$conf_file' file, so ArpOn is running in Dynamic Mode${reset}"
 	fi
-
+return 0
 }
 
 time=10

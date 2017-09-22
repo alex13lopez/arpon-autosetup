@@ -1,0 +1,4 @@
+################################ CHANGELOG V2.2 ###################################
+
+1. Now It uses killall to kill any running instances of arpon
+2. Added a variable to specify where is the arpon.conf, since the last version of ArpON changed the location
