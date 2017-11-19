@@ -23,20 +23,19 @@ green=`tput setaf 2`
 
 
 # Killing any running currently instance of arpon
-killall -9 arpon
+killall -9 arpon 1>/dev/null 2>/dev/null
 
 # Now depending on the network that we are connected to we setup the arpon.conf and start a new instance of arpon
 
 function autosetup() {
-	# $1 = ip, $2 = iface
 	if grep -q "$1" "$conf_file"; then
 		sed -i '/^#/! s/^/#/' "$conf_file"
 		sed -i "/$1/ s|^#||" "$conf_file"
-		arpon -i $2 -d -H
+		arpon -i $2 -d -H 1>/dev/null 2>/dev/null
 		echo "${bold}${green}Automatic setup succeed!${reset}"
 	else
-		arpon -i $2 -d -D
-		echo "${bold}${yellow}WARNING: NO IP matching '$1*' FOUND IN '$conf_file' file, so ArpOn is running in Dynamic Mode${reset}"
+		arpon -i $2 -d -D 1>/dev/null 2>/dev/null
+		echo "${bold}${yellow}WARNING: IP '$ip*' NOT FOUND IN arpon.conf file, so ArpOn is running in Dynamic Mode${reset}"
 	fi
 return 0
 }
